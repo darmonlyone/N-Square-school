@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from .models import School, Student
-from .serializer import SchoolSerializer, StudentSerializer
+from .serializer import SchoolSerializer, StudentSerializer, StudentSerializerWithoutSchoolField
 from rest_framework.response import Response
 
 
@@ -33,6 +33,14 @@ class StudentViewSet(ModelViewSet):
 class StudentSchoolViewSet(ModelViewSet):
     serializer_class = StudentSerializer
     queryset = Student.objects.all()
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+
+        if self.request.method == 'PUT':
+            serializer_class = StudentSerializerWithoutSchoolField
+
+        return serializer_class
 
     def get_queryset(self):
         return Student.objects.filter(school=self.kwargs['schools_pk'])

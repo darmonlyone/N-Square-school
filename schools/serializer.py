@@ -14,3 +14,11 @@ class StudentSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'
+
+
+class StudentSerializerWithoutSchoolField(ModelSerializer):
+    student_id = ReadOnlyField()
+
+    class Meta:
+        model = Student
+        fields = ('first_name', 'last_name', 'student_id')
