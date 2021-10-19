@@ -2,4 +2,5 @@ djangorestframework
 django-filter
 psycopg2
 drf-nested-routers
+django-environ
 Django~=3.2.8
