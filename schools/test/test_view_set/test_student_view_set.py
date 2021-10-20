@@ -25,7 +25,7 @@ class StudentViewSetTestCase(TestCase):
         response = student_detail(request)
         self.assertEqual(response.status_code, 200)
 
-    def test_create_school(self):
+    def test_create_student(self):
         """Test create a student"""
         data = {"last_name": "lnamee", "first_name": "fnamee", "school": self.school.id}
         request = APIRequestFactory().post("/students/", data=data)
@@ -43,7 +43,7 @@ class StudentViewSetTestCase(TestCase):
         response = student_detail(request)
         self.assertEqual(response.status_code, 409)
 
-    def test_update_school(self):
+    def test_update_student(self):
         """Test update a student"""
         student = Student.objects.create(first_name="fname", last_name="lname", school=self.school)
         data = {"first_name": "Nameer", "last_name": "lnameeeee", "school": self.school.pk}
@@ -56,7 +56,7 @@ class StudentViewSetTestCase(TestCase):
         self.assertEqual(updated_school.first_name, "Nameer")
         self.assertEqual(updated_school.last_name, "lnameeeee")
 
-    def test_delete_school(self):
+    def test_delete_student(self):
         """Test delete a student"""
         student = Student.objects.create(first_name="fname", last_name="lname", school=self.school)
         request = APIRequestFactory().delete(f"/students/{student.pk}")
