@@ -4,7 +4,7 @@ from django.db import models
 
 class School(models.Model):
     name = models.CharField(max_length=20)
-    max_student = models.IntegerField(default=0)
+    max_student = models.IntegerField(default=20)
 
     def __str__(self):
         return self.name
