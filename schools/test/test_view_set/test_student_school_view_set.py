@@ -43,8 +43,16 @@ class StudentViewSetTestCase(TestCase):
         response = student_detail(request, schools_pk=school.pk)
         self.assertEqual(response.status_code, 409)
 
+    def test_create_student_school_does_not_exit(self):
+        """Test create a student with un exiting school"""
+        data = {"last_name": "lnamee", "first_name": "fnamee"}
+        request = APIRequestFactory().post("/students/", data=data)
+        student_detail = StudentSchoolViewSet.as_view({'post': 'create'})
+        response = student_detail(request, schools_pk=-1)
+        self.assertEqual(response.status_code, 400)
+
     def test_update_student_by_school(self):
-        """Test update a student where school was exit"""
+        """Test update a student"""
         student = Student.objects.create(first_name="fname", last_name="lname", school=self.school)
         data = {"first_name": "Nameer", "last_name": "lnameeeee"}
         request = APIRequestFactory().put(f"school/{self.school.pk}/students/{student.pk}", data=data)
@@ -55,6 +63,19 @@ class StudentViewSetTestCase(TestCase):
         updated_school = Student.objects.get()
         self.assertEqual(updated_school.first_name, "Nameer")
         self.assertEqual(updated_school.last_name, "lnameeeee")
+
+    def test_patch_student_by_school(self):
+        """Test patch a student where school was exit"""
+        student = Student.objects.create(first_name="fname", last_name="lname", school=self.school)
+        data = {"first_name": "Nameer"}
+        request = APIRequestFactory().put(f"school/{self.school.pk}/students/{student.pk}", data=data)
+        student_detail = StudentSchoolViewSet.as_view({'put': 'partial_update'})
+        response = student_detail(request, pk=student.pk, schools_pk=self.school.pk)
+        self.assertEqual(response.status_code, 200)
+
+        updated_school = Student.objects.get()
+        self.assertEqual(updated_school.first_name, "Nameer")
+        self.assertEqual(updated_school.last_name, "lname")
 
     def test_delete_student_by_school(self):
         """Test delete a student where school was exit"""

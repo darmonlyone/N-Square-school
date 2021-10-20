@@ -42,6 +42,19 @@ class SchoolViewSetTestCase(TestCase):
         self.assertEqual(updated_school.name, "Nameer")
         self.assertEqual(updated_school.max_student, 30)
 
+    def test_patch_school(self):
+        """Test update a school"""
+        school = School.objects.create(name="name", max_student=20)
+        data = {"name": "Nameer"}
+        request = APIRequestFactory().put(f"/schools/{school.pk}", data=data)
+        school_detail = SchoolViewSet.as_view({'put': 'partial_update'})
+        response = school_detail(request, pk=school.pk)
+        self.assertEqual(response.status_code, 200)
+
+        updated_school = School.objects.get()
+        self.assertEqual(updated_school.name, "Nameer")
+        self.assertEqual(updated_school.max_student, 20)
+
     def test_delete_school(self):
         """Test delete a school"""
         school = School.objects.create(name="name", max_student=20)
@@ -52,4 +65,3 @@ class SchoolViewSetTestCase(TestCase):
 
         updated_school = School.objects.all()
         self.assertEqual(updated_school.count(), 0)
-

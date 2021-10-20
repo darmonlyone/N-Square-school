@@ -33,6 +33,14 @@ class StudentViewSetTestCase(TestCase):
         response = student_detail(request)
         self.assertEqual(response.status_code, 201)
 
+    def test_create_student_school_does_not_exit(self):
+        """Test create a student with un exiting school"""
+        data = {"last_name": "lnamee", "first_name": "fnamee", "school": -1}
+        request = APIRequestFactory().post("/students/", data=data)
+        student_detail = StudentViewSet.as_view({'post': 'create'})
+        response = student_detail(request)
+        self.assertEqual(response.status_code, 400)
+
     def test_create_validate_max_students_school(self):
         """Test create a student with max student on the school"""
         school = School.objects.create(name="name", max_student=1)
@@ -55,6 +63,20 @@ class StudentViewSetTestCase(TestCase):
         updated_school = Student.objects.get()
         self.assertEqual(updated_school.first_name, "Nameer")
         self.assertEqual(updated_school.last_name, "lnameeeee")
+
+    def test_patch_student(self):
+        """Test update a student"""
+        student = Student.objects.create(first_name="fname", last_name="lname", school=self.school)
+        data = {"first_name": "Nameer"}
+        request = APIRequestFactory().put(f"/students/{student.pk}", data=data)
+        student_detail = StudentViewSet.as_view({'put': 'partial_update'})
+        response = student_detail(request, pk=student.pk)
+        self.assertEqual(response.status_code, 200)
+
+        updated_school = Student.objects.get()
+        self.assertEqual(updated_school.first_name, "Nameer")
+        self.assertEqual(updated_school.last_name, "lname")
+
 
     def test_delete_student(self):
         """Test delete a student"""
