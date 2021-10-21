@@ -65,14 +65,16 @@ class StudentSchoolViewSet(ModelViewSet):
             if student.count() >= student_school.max_student:
                 return Response("Maximum number of student reached", status=status.HTTP_409_CONFLICT)
 
-            # unmutable before set data
-            _mutable = request.data._mutable
-            request.data._mutable = True
+            if '_mutable' is request.data:
+                # unmutable before add school data
+                _mutable = request.data._mutable
+                request.data._mutable = True
 
-            request.data['school'] = student_school.id
+            request.data.update({'school': student_school.id})
 
-            # set mutable back after set data
-            request.data._mutable = _mutable
+            if '_mutable' in request.data:
+                # set mutable back after set data
+                request.data._mutable = _mutable
 
         serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
